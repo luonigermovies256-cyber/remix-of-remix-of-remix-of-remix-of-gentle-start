@@ -7,6 +7,20 @@ export function resolveUploadToken(url: string, saved?: string, environment = ""
   return (saved || environment || DEFAULT_UPLOAD_TOKEN).trim();
 }
 
+/** Same-origin server relay for control calls to the built-in service. */
+export const UPLOAD_PROXY_PREFIX = "/api/public/uploads";
+
+/**
+ * True when the URL is the built-in service. The service omits CORS headers
+ * on its responses, so browsers reach it through the app's own server relay
+ * (/api/public/uploads/*) instead of calling it directly.
+ */
+export function isBuiltInUploadApi(url: string) {
+  return url.trim().replace(/\/+$/, "") === DEFAULT_UPLOAD_API;
+}
+
+
+
 const LEGACY_UPLOAD_APIS = new Set([
   "https://function-bun-production-e794.up.railway.app",
   "https://function-bun-production-9a7c.up.railway.app",
