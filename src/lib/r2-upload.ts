@@ -1,4 +1,6 @@
+import { isBuiltInUploadApi, UPLOAD_PROXY_PREFIX } from "@/lib/upload-backend";
 import { r2Config } from "@/lib/r2-config";
+
 import type { UploadProgress } from "@/lib/storage-types";
 
 const PART_SIZE = 16 * 1024 * 1024; // 16MB parts: smaller retries, more parallelism
@@ -21,19 +23,32 @@ async function waitForNetwork() {
 
 async function api<T>(path: string, body: unknown): Promise<T> {
   const { url: base, token } = r2Config();
+  // The built-in service answers every request but omits CORS headers, so its
+  // control calls are relayed through this app's own server proxy. Custom
+  // endpoints are still called directly.
+  const viaProxy = isBuiltInUploadApi(base) && typeof window !== "undefined";
+  const target = viaProxy
+    ? `${window.location.origin}${UPLOAD_PROXY_PREFIX}${path}`
+    : `${base}${path}`;
   let res: Response;
   try {
-    res = await fetch(`${base}${path}`, {
+    res = await fetch(target, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(viaProxy || !token ? {} : { Authorization: `Bearer ${token}` }),
       },
       body: JSON.stringify(body),
     });
   } catch {
-    throw new Error("Cannot connect to the upload service. Check your connection; the upload Worker must also allow this website with Access-Control-Allow-Origin on every response, not only OPTIONS.");
+    throw new Error(
+      "Cannot connect to the upload service. Check your connection" +
+        (viaProxy
+          ? "."
+          : "; a custom upload endpoint must allow this website with Access-Control-Allow-Origin on every response, not only OPTIONS."),
+    );
   }
+
   if (!res.ok) throw new Error(`Upload service error (${res.status}): ${await res.text()}`);
   return (await res.json()) as T;
 }

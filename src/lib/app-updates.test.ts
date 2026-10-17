@@ -1,7 +1,13 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { DEFAULT_UPLOAD_API, resolveUploadBackend, resolveUploadToken } from "./upload-backend";
+import {
+  DEFAULT_UPLOAD_API,
+  isBuiltInUploadApi,
+  resolveUploadBackend,
+  resolveUploadToken,
+} from "./upload-backend";
 import { beginUpload, hasActiveUploads, isNewRelease } from "./app-update-policy";
+
 
 describe("upload backend", () => {
   test("fixes the requested service token to * regardless of old settings or environment", () => {
@@ -23,7 +29,19 @@ describe("upload backend", () => {
   });
 });
 
+describe("built-in upload relay", () => {
+  test("browsers reach the built-in service through the app's own relay", () => {
+    assert.equal(isBuiltInUploadApi(DEFAULT_UPLOAD_API), true);
+    assert.equal(isBuiltInUploadApi(DEFAULT_UPLOAD_API + "/"), true);
+  });
+  test("custom and disabled endpoints are called directly, not relayed", () => {
+    assert.equal(isBuiltInUploadApi("https://custom.example"), false);
+    assert.equal(isBuiltInUploadApi(""), false);
+  });
+});
+
 describe("automatic updates", () => {
+
   test("refreshes only for a different valid release", () => {
     assert.equal(isNewRelease("release-1", "release-2"), true);
     assert.equal(isNewRelease("release-1", "release-1"), false);

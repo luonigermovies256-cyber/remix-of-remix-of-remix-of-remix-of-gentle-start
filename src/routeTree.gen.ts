@@ -23,6 +23,7 @@ import { Route as PayIdRouteImport } from './routes/pay.$id'
 import { Route as AdminUsersIndexRouteImport } from './routes/admin.users.index'
 import { Route as AdminUsersIdRouteImport } from './routes/admin.users.$id'
 import { Route as ApiPublicPesapalIpnRouteImport } from './routes/api/public/pesapal-ipn'
+import { Route as ApiPublicUploadsSplatRouteImport } from './routes/api/public/uploads/$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -94,6 +95,11 @@ const ApiPublicPesapalIpnRoute = ApiPublicPesapalIpnRouteImport.update({
   path: '/api/public/pesapal-ipn',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicUploadsSplatRoute = ApiPublicUploadsSplatRouteImport.update({
+  id: '/api/public/uploads/$',
+  path: '/api/public/uploads/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -110,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/admin/users/$id': typeof AdminUsersIdRoute
   '/api/public/pesapal-ipn': typeof ApiPublicPesapalIpnRoute
   '/admin/users/': typeof AdminUsersIndexRoute
+  '/api/public/uploads/$': typeof ApiPublicUploadsSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/admin/users/$id': typeof AdminUsersIdRoute
   '/api/public/pesapal-ipn': typeof ApiPublicPesapalIpnRoute
   '/admin/users': typeof AdminUsersIndexRoute
+  '/api/public/uploads/$': typeof ApiPublicUploadsSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -142,6 +150,7 @@ export interface FileRoutesById {
   '/admin/users/$id': typeof AdminUsersIdRoute
   '/api/public/pesapal-ipn': typeof ApiPublicPesapalIpnRoute
   '/admin/users/': typeof AdminUsersIndexRoute
+  '/api/public/uploads/$': typeof ApiPublicUploadsSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -160,6 +169,7 @@ export interface FileRouteTypes {
     | '/admin/users/$id'
     | '/api/public/pesapal-ipn'
     | '/admin/users/'
+    | '/api/public/uploads/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
     | '/admin/users/$id'
     | '/api/public/pesapal-ipn'
     | '/admin/users'
+    | '/api/public/uploads/$'
   id:
     | '__root__'
     | '/'
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/admin/users/$id'
     | '/api/public/pesapal-ipn'
     | '/admin/users/'
+    | '/api/public/uploads/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -202,6 +214,7 @@ export interface RootRouteChildren {
   GenreSlugRoute: typeof GenreSlugRoute
   PayIdRoute: typeof PayIdRoute
   ApiPublicPesapalIpnRoute: typeof ApiPublicPesapalIpnRoute
+  ApiPublicUploadsSplatRoute: typeof ApiPublicUploadsSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -304,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPesapalIpnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/uploads/$': {
+      id: '/api/public/uploads/$'
+      path: '/api/public/uploads/$'
+      fullPath: '/api/public/uploads/$'
+      preLoaderRoute: typeof ApiPublicUploadsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -336,6 +356,7 @@ const rootRouteChildren: RootRouteChildren = {
   GenreSlugRoute: GenreSlugRoute,
   PayIdRoute: PayIdRoute,
   ApiPublicPesapalIpnRoute: ApiPublicPesapalIpnRoute,
+  ApiPublicUploadsSplatRoute: ApiPublicUploadsSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
