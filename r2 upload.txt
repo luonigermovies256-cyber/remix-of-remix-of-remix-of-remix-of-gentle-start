@@ -1,0 +1,210 @@
+============================================================
+ R2 UPLOAD INTEGRATION — HOW IT WORKS (VJ EMMA.SITE)
+============================================================
+
+The system has TWO parts:
+
+  1. A SIGNER SERVER (backend) — a tiny Node.js app whose ONLY job is to
+     create presigned S3 URLs for your Cloudflare R2 bucket.
+  2. A BROWSER UPLOADER (frontend) — JavaScript that asks the signer for
+     URLs, then PUTs the file bytes DIRECTLY to Cloudflare R2.
+
+The file bytes NEVER pass through the signer server. The server only
+creates signed links, so even 5 GB+ files work on a cheap/free host
+because the host's bandwidth and body-size limits never apply.
+
+
+============================================================
+ PART 1 — THE SIGNER SERVER (r2-upload-server.js)
+============================================================
+
+Deploy `r2-upload-server.js` on ANY Node 18+ host (Railway, Render,
+Fly.io, Koyeb, VPS). It has ZERO npm dependencies — no `npm install`
+needed. Start command:  node server.js
+
+Current deployment:
+  https://r2upload.nexusplatformafrica.workers.dev
+
+ENVIRONMENT VARIABLES the server needs:
+  R2_ACCOUNT_ID          Cloudflare account ID (R2 dashboard, right sidebar)
+  R2_ACCESS_KEY_ID       R2 > Manage API Tokens > Object Read & Write
+  R2_SECRET_ACCESS_KEY   secret shown with that token
+  R2_BUCKET              your bucket name
+  R2_PUBLIC_BASE_URL     public bucket / custom domain URL, no trailing /
+  UPLOAD_TOKEN           any long random string (the app must send the same)
+  ALLOWED_ORIGINS        https://your-site.com,http://localhost:8080 (or *)
+  PORT                   leave unset; the host sets it
+
+ENDPOINTS (all POST, JSON body, header: Authorization: Bearer <UPLOAD_TOKEN>):
+
+  GET  / or /health   -> { ok: true }   (no auth — use this to test)
+
+  POST /uploads/single
+    body: { folder, filename, contentType }
+    -> { url, publicUrl }
+    `url` is a presigned PUT URL. PUT the whole file to it, done.
+
+  POST /uploads/create      (multipart, for files > 16 MB)
+    body: { folder, filename, contentType }
+    -> { key, uploadId, publicUrl }
+
+  POST /uploads/sign
+    body: { key, uploadId, partNumbers: [1,2,3,...] }
+    -> { urls: [{ partNumber, url }, ...] }
+    Each url is a presigned PUT for one 16 MB part.
+
+  POST /uploads/complete
+    body: { key, uploadId, parts: [{ partNumber, etag }, ...] }
+    The etag comes from the ETag response header of each part PUT.
+
+  POST /uploads/abort
+    body: { key, uploadId }
+    Cleans up a failed multipart upload.
+
+
+============================================================
+ PART 2 — THE BROWSER UPLOADER
+============================================================
+
+Config (r2-config.ts): the backend URL + token can come from:
+  1. an admin setting saved in the database (app_settings.upload),
+  2. env vars VITE_R2_UPLOAD_API / VITE_R2_UPLOAD_TOKEN,
+  3. a hardcoded default URL.
+If the URL is empty, uploads fall back to Firebase Storage instead.
+Previously saved e794 and 9a7c Railway upload addresses are automatically
+redirected to the current Workers service; other custom addresses are preserved.
+
+Upload flow (r2-upload.ts):
+
+  Files <= 16 MB:
+    1. POST /uploads/single  -> get presigned PUT url + publicUrl
+    2. XMLHttpRequest PUT the file to `url` with Content-Type header
+       (XHR is used instead of fetch because it gives upload progress events)
+    3. Save `publicUrl` in the database — that's the playable file URL.
+
+  Files > 16 MB (multipart):
+    1. POST /uploads/create  -> key, uploadId, publicUrl
+    2. Split the file into 16 MB parts (file.slice)
+    3. POST /uploads/sign with all part numbers -> one PUT url per part
+    4. Upload parts with XHR PUT, 6 at a time (concurrency pool)
+    5. Each part PUT returns an ETag header — collect { partNumber, etag }
+    6. POST /uploads/complete with the etag list -> file is assembled
+    7. On any fatal error: POST /uploads/abort to clean up
+
+  Reliability built in:
+    - Each failed part is retried up to 8 times with backoff.
+    - If the tab goes offline, it waits for the "online" event then retries.
+    - A screen Wake Lock + beforeunload warning stop the browser from
+      killing an in-flight upload.
+    - Progress is summed across all parts: sum(bytes per part) / file size.
+
+
+============================================================
+ WHY IT IS PROBABLY FAILING ON YOUR OTHER WEBSITE
+============================================================
+
+Check these in order — 95% of failures are #1 and #2:
+
+1. R2 BUCKET CORS (most common!)
+   The browser PUTs straight to R2, so the R2 BUCKET itself must allow
+   your site's origin. Cloudflare dashboard > R2 > your bucket >
+   Settings > CORS policy:
+
+   [{
+     "AllowedOrigins": ["https://your-new-site.com", "http://localhost:8080"],
+     "AllowedMethods": ["PUT", "POST", "GET", "HEAD"],
+     "AllowedHeaders": ["*"],
+     "ExposeHeaders": ["ETag"],
+     "MaxAgeSeconds": 86400
+   }]
+
+   *** "ExposeHeaders": ["ETag"] is MANDATORY. ***
+   Without it, multipart part PUTs succeed but the browser cannot read
+   the ETag header, so /uploads/complete never happens and you get:
+   "Part N did not return an ETag (check R2 CORS ExposeHeaders)".
+   Also: every NEW domain you upload from must be added to AllowedOrigins.
+
+2. SIGNER SERVER ALLOWED_ORIGINS
+   The signer also does CORS. Set ALLOWED_ORIGINS env var to include the
+   new site's domain (comma-separated), or "*" while testing. If it
+   doesn't match, the browser blocks the /uploads/* calls entirely.
+
+3. WRONG/MISSING UPLOAD_TOKEN
+   The app must send `Authorization: Bearer <UPLOAD_TOKEN>` and it must
+   exactly match the server's env var. Otherwise you get
+   "Upload service error (401): unauthorized".
+
+4. SERVER MISSING ENV VARS
+   The server logs `[warn] missing environment variable: X` at startup.
+   Check the host's logs. Missing R2 keys = broken signatures =
+   SignatureDoesNotMatch / 403 from R2 on the PUT.
+
+5. R2_PUBLIC_BASE_URL wrong
+   Uploads succeed but files don't play/download. It must be the bucket's
+   public URL (r2.dev subdomain or your custom domain), no trailing slash,
+   and the bucket must have public access enabled on that domain.
+
+6. Testing quickly:
+   - Health:  curl https://your-signer/health  -> {"ok":true,...}
+   - Open browser devtools > Network. A failing OPTIONS/PUT to
+     *.r2.cloudflarestorage.com with a CORS error = problem #1.
+     A 401 from your signer = problem #3. A 403 SignatureDoesNotMatch
+     from R2 = problem #4 (wrong keys) or clock skew on the server.
+
+
+============================================================
+ MINIMAL COPY-PASTE FRONTEND (plain JS, any website)
+============================================================
+
+const API   = "https://your-signer.up.railway.app";
+const TOKEN = "your-upload-token";
+
+async function api(path, body) {
+  const res = await fetch(API + path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json",
+               Authorization: "Bearer " + TOKEN },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error("Upload service error " + res.status +
+                               ": " + await res.text());
+  return res.json();
+}
+
+function putBlob(url, blob, contentType, onBytes) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", url, true);
+    if (contentType) xhr.setRequestHeader("Content-Type", contentType);
+    xhr.upload.onprogress = (e) => onBytes(e.loaded);
+    xhr.onload = () => xhr.status < 300
+      ? resolve((xhr.getResponseHeader("ETag") || "").replace(/"/g, ""))
+      : reject(new Error("PUT failed " + xhr.status));
+    xhr.onerror = () => reject(new Error("network error"));
+    xhr.send(blob);
+  });
+}
+
+// Simple version (files up to a few hundred MB, single PUT):
+async function uploadSmall(file, folder) {
+  const { url, publicUrl } = await api("/uploads/single", {
+    folder, filename: file.name, contentType: file.type,
+  });
+  await putBlob(url, file, file.type, (n) =>
+    console.log(Math.round(n / file.size * 100) + "%"));
+  return publicUrl; // save this in your database
+}
+
+// Multipart (big files): copy uploadToR2() from src/lib/r2-upload.ts —
+// it is framework-free TypeScript and works in any browser app.
+
+============================================================
+ SUMMARY CHECKLIST FOR THE NEW SITE
+============================================================
+[ ] Signer server deployed and /health returns ok
+[ ] All 6 env vars set on the signer (no [warn] lines in logs)
+[ ] ALLOWED_ORIGINS on the signer includes the new site's domain
+[ ] R2 bucket CORS includes the new site's domain AND ExposeHeaders ETag
+[ ] Frontend sends the same UPLOAD_TOKEN as the server
+[ ] R2_PUBLIC_BASE_URL is the bucket's working public URL
+[ ] Small file uploads work first, then test a >16 MB file (multipart)

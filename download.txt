@@ -1,0 +1,258 @@
+==============================================================
+ VIDEO DOWNLOAD INTEGRATION GUIDE
+ (OneAxcess / S3 detection + Terabox proxy + blob downloads)
+==============================================================
+
+This is exactly how the download system in this website works, so you
+can copy it into another site. All of it lives in ONE file:
+
+    src/lib/download.ts
+
+No backend database is involved. There is only ONE external piece: a
+Cloudflare Worker ("download proxy") that re-serves protected video
+URLs with a proper filename and CORS headers.
+
+
+--------------------------------------------------------------
+1. THE BIG IDEA — 3 KINDS OF VIDEO URLS
+--------------------------------------------------------------
+
+Every video URL in the site is classified into one of 3 groups, and
+each group is downloaded DIFFERENTLY:
+
+  A) OneAxcess / Amazon S3 originals
+     - Detected by hostname: contains "oneaxcess" OR ends with
+       "amazonaws.com".
+     - These hosts BLOCK cross-origin reads (no CORS headers), so the
+       browser is NOT allowed to fetch() them into a blob.
+     - If you just window.open() them, the browser PLAYS the video in a
+       new tab instead of downloading — bad.
+     - SOLUTION: send the URL through the download worker, which
+       streams the file and re-serves it with:
+           Content-Disposition: attachment; filename="..."
+       so the browser downloads it as a named file.
+
+  B) Terabox / 1024tera streaming links
+     - Detected by hostname matching /terabox|1024tera/i.
+     - These are HLS (.m3u8) streams behind a CORS-locked host. They
+       can't even PLAY in a normal <video> tag cross-origin.
+     - SOLUTION: they ALWAYS go through the worker — both for playback
+       (playableUrl) and for download.
+
+  C) Everything else (R2 public buckets, your own storage, any
+     CORS-open host)
+     - These allow cross-origin fetch(), so the site downloads them in
+       the browser: fetch -> read the stream -> build a Blob ->
+       trigger a download with the browser's own download manager.
+       This gives a real progress percentage and never opens a new tab.
+     - If the fetch fails (origin actually refuses CORS), it FALLS BACK
+       to the worker automatically.
+
+
+--------------------------------------------------------------
+2. THE DETECTION CODE (copy-paste ready)
+--------------------------------------------------------------
+
+  const DOWNLOAD_PROXY =
+    "https://download.mainplatform-nexus.workers.dev/";
+
+  const hostOf = (url) => {
+    try {
+      return new URL(url, window.location.href).hostname;
+    } catch {
+      return "";
+    }
+  };
+
+  // (A) OneAxcess / S3 originals — must go through the worker
+  const isS3Source = (url) => {
+    const h = hostOf(url).toLowerCase();
+    return h.includes("oneaxcess") || h.endsWith("amazonaws.com");
+  };
+
+  // (B) Terabox HLS links — must go through the worker
+  const isTerabox = (url) => /terabox|1024tera/i.test(hostOf(url));
+
+  // Build a worker URL that re-serves the file as a download
+  const proxyUrl = (url, { download = false, filename = "" } = {}) => {
+    const p = new URLSearchParams({ url });
+    if (download) p.set("download", "1");
+    if (filename) p.set("filename", filename);
+    return `${DOWNLOAD_PROXY}?${p.toString()}`;
+  };
+
+  // What the <video> player should actually load
+  const playableUrl = (url) => (isTerabox(url) ? proxyUrl(url) : url);
+
+Detection order matters: check isS3Source() / isTerabox() FIRST,
+because those hosts can never be fetched cross-origin. Everything else
+tries a direct blob download and only falls back to the proxy if the
+fetch throws.
+
+
+--------------------------------------------------------------
+3. THE DOWNLOAD FLOW (step by step)
+--------------------------------------------------------------
+
+  async function downloadVideo(url, title, onProgress) {
+    // 1. Build a safe filename from the video title
+    const clean = title.replace(/[\\/:*?"<>|]+/g, "-").trim() || "video";
+    const ext = (url.split("?")[0].split(".").pop() || "").toLowerCase();
+    const filename =
+      /^[a-z0-9]{2,5}$/.test(ext) && ext !== "com"
+        ? `${clean}.${ext}`       // keep real extension (.mp4, .mkv...)
+        : `${clean}.mp4`;         // fallback when URL has no extension
+
+    // 2. Protected hosts -> worker, plain <a download> click.
+    //    The worker adds "Content-Disposition: attachment" so the
+    //    browser saves it instead of playing it. No progress possible
+    //    here — the browser handles the download itself.
+    if (isS3Source(url) || isTerabox(url)) {
+      clickDownload(proxyUrl(url, { download: true, filename }), filename);
+      return;
+    }
+
+    // 3. Everything else -> blob download with live progress
+    try {
+      await blobDownload(url, filename, onProgress);
+    } catch {
+      // 4. CORS refused after all -> fall back to the worker
+      clickDownload(proxyUrl(url, { download: true, filename }), filename);
+    }
+  }
+
+  function clickDownload(href, filename) {
+    const a = document.createElement("a");
+    a.href = href;
+    a.download = filename;      // hint for same-origin/blob URLs
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  async function blobDownload(url, filename, onProgress) {
+    const res = await fetch(url, { mode: "cors", credentials: "omit" });
+    if (!res.ok) throw new Error(`Download failed (${res.status})`);
+
+    const total = Number(res.headers.get("Content-Length") ?? 0);
+    let blob;
+    if (res.body && total) {
+      // stream chunk by chunk so we can report real progress %
+      const reader = res.body.getReader();
+      const chunks = [];
+      let loaded = 0;
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        loaded += value.byteLength;
+        onProgress?.(Math.min(99, Math.round((loaded / total) * 100)));
+      }
+      blob = new Blob(chunks, {
+        type: res.headers.get("Content-Type") ?? "video/mp4",
+      });
+    } else {
+      blob = await res.blob();  // no Content-Length -> no progress
+    }
+
+    const href = URL.createObjectURL(blob);
+    clickDownload(href, filename);
+    setTimeout(() => URL.revokeObjectURL(href), 60000);
+    onProgress?.(100);
+  }
+
+
+--------------------------------------------------------------
+4. HOW IT'S USED ON THE WATCH PAGE
+--------------------------------------------------------------
+
+In src/routes/watch.tsx:
+
+  // what plays in the player (Terabox goes through the proxy)
+  const src = fileUrl(current?.video_url ?? item?.video_url ?? item?.stream_url);
+  const playSrc = src ? playableUrl(src) : null;
+
+  // download button
+  const handleDownload = () => {
+    if (!src || downloading) return;
+    setDownloading(true);
+    downloadVideo(src, downloadName, (pct) => setProgress(pct))
+      .catch((e) => toast.error(e.message))
+      .finally(() => setDownloading(false));
+  };
+
+The button shows the live percentage (0-100%) while a blob download is
+running, and "Downloading…" for worker downloads (the browser's
+download manager shows progress for those instead).
+
+VIP titles are blocked BEFORE any of this: if the episode is VIP and
+the user has no active subscription, the button opens the subscribe
+modal and never calls downloadVideo.
+
+
+--------------------------------------------------------------
+5. THE WORKER ITSELF
+--------------------------------------------------------------
+
+The worker at https://download.mainplatform-nexus.workers.dev/
+is a tiny Cloudflare Worker that does:
+
+  GET /?url=<VIDEO_URL>&download=1&filename=<NAME>
+
+  - streams the upstream URL (fetch with streaming passthrough)
+  - copies through Content-Type / Content-Length / Accept-Ranges
+    (Accept-Ranges is what makes HLS playback + seeking work)
+  - adds  Access-Control-Allow-Origin: *
+  - when download=1, adds:
+        Content-Disposition: attachment; filename="<NAME>"
+    which forces the browser to SAVE instead of play
+
+If you're moving to another site you can reuse the same worker — it
+accepts any url. If you want your own, this is the whole thing:
+
+  export default {
+    async fetch(request) {
+      const u = new URL(request.url);
+      const target = u.searchParams.get("url");
+      if (!target) return new Response("missing url", { status: 400 });
+
+      const upstream = await fetch(target, {
+        headers: request.headers.has("range")
+          ? { Range: request.headers.get("range") }
+          : {},
+      });
+
+      const headers = new Headers(upstream.headers);
+      headers.set("Access-Control-Allow-Origin", "*");
+      if (u.searchParams.get("download") === "1") {
+        const name = u.searchParams.get("filename") || "video.mp4";
+        headers.set("Content-Disposition",
+          `attachment; filename="${name.replace(/"/g, "")}"`);
+      }
+      return new Response(upstream.body, {
+        status: upstream.status,
+        headers,
+      });
+    },
+  };
+
+Deploy with:  npx wrangler deploy   (free Cloudflare account)
+
+
+--------------------------------------------------------------
+6. QUICK CHECKLIST FOR YOUR OTHER SITE
+--------------------------------------------------------------
+
+  1. Copy download.ts (or the plain-JS code above) into your project.
+  2. Point DOWNLOAD_PROXY at the existing worker, or deploy your own
+     with the code in section 5.
+  3. For the <video> player:  src = playableUrl(rawUrl)
+     - also check isHlsUrl(url) — .m3u8 needs hls.js, not a plain tag.
+  4. For the download button:  downloadVideo(rawUrl, title, onProgress)
+  5. Make sure video URLs are ABSOLUTE (https://...) — detection is
+     hostname-based, relative URLs will misclassify.
+  6. Never window.open() a OneAxcess/S3 URL — it will play in a tab
+     instead of downloading. Always route it through proxyUrl().
+
+==============================================================
