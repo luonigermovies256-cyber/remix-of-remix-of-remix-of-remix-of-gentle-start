@@ -20,7 +20,13 @@ import {
   type UploadSettings,
 } from "@/lib/app-settings";
 import type { Plan } from "@/components/auth/SubscribeModal";
-import { DEFAULT_UPLOAD_API, resolveUploadBackend, resolveUploadToken } from "@/lib/upload-backend";
+import {
+  DEFAULT_UPLOAD_API,
+  isBuiltInUploadApi,
+  resolveUploadBackend,
+  resolveUploadToken,
+  UPLOAD_PROXY_PREFIX,
+} from "@/lib/upload-backend";
 
 export const Route = createFileRoute("/admin/settings")({
   head: () => ({ meta: [
@@ -123,14 +129,22 @@ function SettingsPage() {
     mutationFn: async () => {
       const base = resolveUploadBackend(upload.backend_url);
       if (!base) throw new Error("Enter the upload backend link first");
+      const viaProxy = isBuiltInUploadApi(base);
       let res: Response;
       try {
         // Signing a probe URL verifies browser CORS and auth without uploading an object.
-        res = await fetch(`${base}/uploads/single`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${resolveUploadToken(base, upload.token)}` },
-          body: JSON.stringify({ folder: "media/connection-test", filename: "connection-test.txt", contentType: "text/plain" }),
-        });
+        // The built-in service omits CORS headers, so it is reached via the app's relay.
+        res = await fetch(
+          viaProxy ? `${window.location.origin}${UPLOAD_PROXY_PREFIX}/uploads/single` : `${base}/uploads/single`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(viaProxy ? {} : { Authorization: `Bearer ${resolveUploadToken(base, upload.token)}` }),
+            },
+            body: JSON.stringify({ folder: "media/connection-test", filename: "connection-test.txt", contentType: "text/plain" }),
+          },
+        );
       } catch {
         throw new Error("Upload connection blocked. Check your connection and allow this website on every upload Worker response, not only OPTIONS.");
       }
