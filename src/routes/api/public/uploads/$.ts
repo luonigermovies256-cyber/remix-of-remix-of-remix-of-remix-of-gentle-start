@@ -24,7 +24,11 @@ export const Route = createFileRoute("/api/public/uploads/$")({
     handlers: {
       OPTIONS: () => new Response(null, { status: 204, headers: CORS_HEADERS }),
       POST: async ({ request, params }) => {
-        const action = params._splat ?? "";
+        // Some hosts pass the splat differently (e.g. "uploads/single" or with
+        // a trailing slash), so read the last path segment of the URL.
+        const fromUrl = new URL(request.url).pathname.replace(/\/+$/, "").split("/").pop() ?? "";
+        const fromSplat = (params._splat ?? "").replace(/\/+$/, "").split("/").pop() ?? "";
+        const action = FORWARDED_ACTIONS.has(fromSplat) ? fromSplat : fromUrl;
         if (!FORWARDED_ACTIONS.has(action)) {
           return Response.json({ error: "not_found" }, { status: 404, headers: CORS_HEADERS });
         }
