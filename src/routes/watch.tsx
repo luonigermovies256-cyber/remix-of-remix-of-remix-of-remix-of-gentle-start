@@ -23,7 +23,32 @@ export const Route = createFileRoute("/watch")({
   validateSearch: (search: Record<string, unknown>) => ({
     id: typeof search["id"] === "string" ? search["id"] : "",
   }),
-  head: () => ({
+  head: ({ match }) => {
+    // Keep this title's sharing details scoped to its query-string URL.
+    if (match.search.id === "d151b10d-3775-4893-a1ff-c526dd8dcc15") {
+      const title = "YOU ARE ALL SURROUNDED | VJ EMMA.SITE";
+      const description = "You're All Surrounded is a 2014 South Korean television series about four rookie detectives and their hot-tempered chief working at a police station in Gangnam, Seoul";
+      const image = "https://pub-eb00261df49f466a9e5efee154650b48.r2.dev/media/posters/219fbfa3-cca2-45e7-be21-94f978ada228-download__2_.jpg";
+      return {
+        meta: [
+          { title },
+          { name: "description", content: description },
+          { property: "og:title", content: title },
+          { property: "og:description", content: description },
+          { property: "og:type", content: "video.tv_show" },
+          { property: "og:image", content: image },
+          { property: "og:image:width", content: "312" },
+          { property: "og:image:height", content: "312" },
+          { property: "og:image:alt", content: "YOU ARE ALL SURROUNDED poster" },
+          { name: "twitter:card", content: "summary" },
+          { name: "twitter:title", content: title },
+          { name: "twitter:description", content: description },
+          { name: "twitter:image", content: image },
+          { name: "twitter:image:alt", content: "YOU ARE ALL SURROUNDED poster" },
+        ],
+      };
+    }
+    return {
     meta: [
       { title: "Watch Free Online | VJ EMMA.SITE" },
       {
@@ -39,7 +64,8 @@ export const Route = createFileRoute("/watch")({
       { property: "og:type", content: "video.other" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-  }),
+    };
+  },
   component: Watch,
 });
 
