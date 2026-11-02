@@ -1,4 +1,6 @@
 # Tasks
+- [x] Allow the requested authenticated email to access the admin dashboard and add credential-policy tests.
+- [ ] Verify the requested account signs in and opens the dashboard: the existing sign-in service rejected the supplied credentials; account creation or password recovery is required.
 - [x] Fix the public `*` upload token in code and verify its precedence with passing tests.
 - [ ] Restore browser upload access: external upload Worker omits Access-Control-Allow-Origin from POST responses. FIXED in-app: control calls now go through the same-origin relay /api/public/uploads/*, so Worker CORS no longer blocks them. Direct browser PUTs to R2 verified (bucket CORS `*`, ETag exposed); a live relay request still needs a signed-in session check.
 - [x] Switch upload service, including previously saved Railway addresses.

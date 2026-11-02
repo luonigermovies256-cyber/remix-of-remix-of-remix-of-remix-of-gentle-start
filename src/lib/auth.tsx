@@ -12,6 +12,8 @@ import {
 } from "firebase/auth";
 import { collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { getDb, getFbAuth, initAnalytics } from "@/lib/firebase";
+import { ADMIN_PHONE, isAdminEmail, isAdminCredential } from "@/lib/admin-access";
+export { ADMIN_EMAIL, ADMIN_PHONE } from "@/lib/admin-access";
 
 const fbAuth = () => getFbAuth();
 const firestore = () => getDb();
@@ -88,16 +90,6 @@ async function ensureProfile(
   }
   await ensureRole(user.uid, extra?.email ?? user.email ?? snap.data()?.["email"]);
 }
-
-/** Only this account gets the admin console. */
-export const ADMIN_EMAIL = "vjemmatruelightstudios@gmail.com";
-export const ADMIN_PHONE = "0760734679";
-
-const isAdminEmail = (email: string | null | undefined) =>
-  (email ?? "").trim().toLowerCase() === ADMIN_EMAIL;
-
-const isAdminCredential = (email: string | null | undefined) =>
-  isAdminEmail(email) || (email ?? "").trim().toLowerCase() === phoneToAuthEmail(ADMIN_PHONE);
 
 async function ensureRole(uid: string, email: string | null | undefined) {
   const roles = await getDocs(collection(firestore(), "user_roles"));
