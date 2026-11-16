@@ -52,6 +52,7 @@ export const CATEGORIES: Category[] = [
     blurb: "Bite-size series you can finish tonight.",
   },
   { slug: "live-tv", short: "Live TV", label: "Live TV", icon: Radio, blurb: "Live channels streaming around the clock." },
+  { slug: "music", short: "Music", label: "Music", icon: Music, blurb: "Music videos and live performances." },
   {
     slug: "upcoming-selections", short: "Upcoming",
     label: "Upcoming Selections",
