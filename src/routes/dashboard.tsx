@@ -7,10 +7,10 @@ export const Route = createFileRoute("/dashboard")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "My dashboard — VJ EMMA.SITE" },
-      { name: "description", content: "Your VJ EMMA.SITE viewer dashboard." },
-      { property: "og:title", content: "My dashboard — VJ EMMA.SITE" },
-      { property: "og:description", content: "Your VJ EMMA.SITE viewer dashboard." },
+      { title: "My dashboard — DWONLUOMOVIES" },
+      { name: "description", content: "Your DWONLUOMOVIES viewer dashboard." },
+      { property: "og:title", content: "My dashboard — DWONLUOMOVIES" },
+      { property: "og:description", content: "Your DWONLUOMOVIES viewer dashboard." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -33,7 +33,7 @@ function DashboardPage() {
 
   return (
     <main className="mx-auto min-h-screen max-w-2xl px-4 py-12">
-      <Link to="/" className="text-sm font-black text-foreground">← VJ EMMA.SITE</Link>
+      <Link to="/" className="text-sm font-black text-foreground">← DWONLUOMOVIES</Link>
       <div className="mt-6 rounded-2xl border border-border bg-card p-6">
         <div className="flex items-center gap-4">
           {user.photoURL ? (

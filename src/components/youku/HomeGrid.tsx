@@ -4,7 +4,6 @@ import { Search } from "lucide-react";
 import { MobileNav } from "@/components/youku/MobileNav";
 import { fileUrl } from "@/lib/storage";
 import type { MediaItem } from "@/lib/media";
-import logoAsset from "@/assets/logo.png";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { SubscribeModal } from "@/components/auth/SubscribeModal";
 import { useAuth } from "@/lib/auth";
@@ -26,7 +25,6 @@ export function HomeGrid({ data, isLoading }: { data: MediaItem[] | undefined; i
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/95 px-3 backdrop-blur-md">
         <Link to="/" className="flex shrink-0 items-center gap-2">
-          <img src={logoAsset} alt="DWONLUOMOVIES logo" className="size-9 rounded-full object-cover ring-1 ring-border" />
           <span className="hidden text-base font-black tracking-tight text-foreground min-[480px]:inline sm:text-lg">DWONLUOMOVIES</span>
         </Link>
         <label className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-full border border-border bg-card px-3">

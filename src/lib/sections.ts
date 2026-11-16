@@ -16,6 +16,7 @@ import {
   CalendarDays,
   Info,
   type LucideIcon,
+  Music,
 } from "lucide-react";
 
 export type Category = {
@@ -52,11 +53,12 @@ export const CATEGORIES: Category[] = [
     blurb: "Bite-size series you can finish tonight.",
   },
   { slug: "live-tv", short: "Live TV", label: "Live TV", icon: Radio, blurb: "Live channels streaming around the clock." },
+  { slug: "music", short: "Music", label: "Music", icon: Music, blurb: "Music videos and live performances." },
   {
     slug: "upcoming-selections", short: "Upcoming",
     label: "Upcoming Selections",
     icon: CalendarClock,
-    blurb: "Coming soon to VJ EMMA.SITE.",
+    blurb: "Coming soon to DWONLUOMOVIES.",
   },
   {
     slug: "for-the-week", short: "Weekly",
@@ -64,7 +66,7 @@ export const CATEGORIES: Category[] = [
     icon: CalendarDays,
     blurb: "This week's curated line-up.",
   },
-  { slug: "learn-more", short: "About", label: "Learn More", icon: Info, blurb: "About VJ EMMA.SITE, VIP and support." },
+  { slug: "learn-more", short: "About", label: "Learn More", icon: Info, blurb: "About DWONLUOMOVIES, VIP and support." },
 ];
 
 export const CONTENT_CATEGORIES = CATEGORIES.filter(

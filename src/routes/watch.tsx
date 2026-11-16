@@ -17,7 +17,6 @@ import { AuthModal } from "@/components/auth/AuthModal";
 import { SubscribeModal } from "@/components/auth/SubscribeModal";
 import { Lock } from "lucide-react";
 import { toast } from "sonner";
-import logoAsset from "@/assets/logo.png";
 
 export const Route = createFileRoute("/watch")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -26,7 +25,7 @@ export const Route = createFileRoute("/watch")({
   head: ({ match }) => {
     // Keep this title's sharing details scoped to its query-string URL.
     if (match.search.id === "d151b10d-3775-4893-a1ff-c526dd8dcc15") {
-      const title = "YOU ARE ALL SURROUNDED | VJ EMMA.SITE";
+      const title = "YOU ARE ALL SURROUNDED | DWONLUOMOVIES";
       const description = "You're All Surrounded is a 2014 South Korean television series about four rookie detectives and their hot-tempered chief working at a police station in Gangnam, Seoul";
       const image = "https://pub-eb00261df49f466a9e5efee154650b48.r2.dev/media/posters/219fbfa3-cca2-45e7-be21-94f978ada228-download__2_.jpg";
       return {
@@ -50,13 +49,13 @@ export const Route = createFileRoute("/watch")({
     }
     return {
     meta: [
-      { title: "Watch Free Online | VJ EMMA.SITE" },
+      { title: "Watch Free Online | DWONLUOMOVIES" },
       {
         name: "description",
         content:
-          "Stream movies, drama series, anime and live channels in HD on VJ EMMA.SITE, with episodes and related titles.",
+          "Stream movies, drama series, anime and live channels in HD on DWONLUOMOVIES, with episodes and related titles.",
       },
-      { property: "og:title", content: "Watch on VJ EMMA.SITE" },
+      { property: "og:title", content: "Watch on DWONLUOMOVIES" },
       {
         property: "og:description",
         content: "Stream movies, drama series and anime in HD with episodes and related titles.",
@@ -344,9 +343,8 @@ function Watch() {
           {/* Right rail */}
           <aside className="w-full shrink-0 lg:w-[380px]">
             <div className="hidden items-center gap-2 border-b border-border pb-3 lg:flex">
-              <img src={logoAsset} alt="VJ EMMA.SITE logo" className="size-6 shrink-0" />
               <span className="whitespace-nowrap text-base font-bold tracking-tight text-foreground">
-                VJ EMMA.SITE
+                DWONLUOMOVIES
               </span>
             </div>
 

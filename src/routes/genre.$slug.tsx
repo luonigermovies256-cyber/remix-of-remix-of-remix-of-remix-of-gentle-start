@@ -20,8 +20,8 @@ export const Route = createFileRoute("/genre/$slug")({
   },
   head: ({ loaderData }) => {
     const label = loaderData?.label ?? "Genre";
-    const title = `${label} movies & series — VJ EMMA.SITE`;
-    const description = `Stream ${label} titles in HD on VJ EMMA.SITE.`;
+    const title = `${label} movies & series — DWONLUOMOVIES`;
+    const description = `Stream ${label} titles in HD on DWONLUOMOVIES.`;
     return {
       meta: [
         { title },

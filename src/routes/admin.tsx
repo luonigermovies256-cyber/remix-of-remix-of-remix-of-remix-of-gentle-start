@@ -1,15 +1,14 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { BarChart3, Clapperboard, LogOut, Settings, Users, Wallet } from "lucide-react";
-import logoAsset from "@/assets/logo.png";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Admin Console — VJ EMMA.SITE" },
+      { title: "Admin Console — DWONLUOMOVIES" },
       { name: "description", content: "Manage media, users, wallet and settings." },
       { name: "robots", content: "noindex" },
-      { property: "og:title", content: "Admin Console — VJ EMMA.SITE" },
+      { property: "og:title", content: "Admin Console — DWONLUOMOVIES" },
       { property: "og:description", content: "Manage media, users, wallet and settings." },
     ],
   }),
@@ -39,7 +38,6 @@ function AdminLayout() {
   if (!session || !isAdmin) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-3 px-6 text-center">
-        <img src={logoAsset} alt="" className="size-10" />
         <h1 className="text-lg font-semibold">Admin access only</h1>
         <p className="max-w-sm text-sm text-muted-foreground">
           {session
@@ -57,9 +55,8 @@ function AdminLayout() {
     <div className="admin-surface flex min-h-screen w-full bg-background lg:p-3">
       <aside className="card-soft fixed inset-y-3 left-3 z-30 hidden w-[196px] flex-col lg:flex">
         <Link to="/" className="flex h-14 shrink-0 items-center gap-2 px-4">
-          <img src={logoAsset} alt="" className="size-6" />
           <span className="whitespace-nowrap text-[13px] font-bold tracking-tight">
-            VJ EMMA.SITE
+            DWONLUOMOVIES
           </span>
         </Link>
         <div className="px-4 pb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">

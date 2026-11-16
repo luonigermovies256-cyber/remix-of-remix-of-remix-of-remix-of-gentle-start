@@ -44,7 +44,7 @@ export function AuthForm({ mode, redirect }: { mode: "login" | "signup"; redirec
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-4 py-12">
       <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-lg">
-        <Link to="/" className="text-sm font-black tracking-tight text-foreground">VJ EMMA.SITE</Link>
+        <Link to="/" className="text-sm font-black tracking-tight text-foreground">DWONLUOMOVIES</Link>
         <h1 className="mt-4 text-2xl font-bold text-foreground">{isSignup ? "Create your account" : "Welcome back"}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {isSignup ? "Sign up to keep your viewer dashboard." : "Sign in to open your dashboard."}

@@ -161,6 +161,7 @@ function ForYou({ genre }: { genre: string | null }) {
 const KIND_FOR_SLUG: Record<string, string[]> = {
   movies: ["movie", "film"],
   drama: ["series", "drama", "tv", "show"],
+  music: ["music", "song", "concert"],
 };
 
 function CategoryPage() {
@@ -206,9 +207,9 @@ function CategoryPage() {
       <Shell slug={slug}>
         <div className="grid gap-4 md:grid-cols-2">
           <section className="card-soft p-5">
-            <h2 className="text-base font-semibold">About VJ EMMA.SITE</h2>
+            <h2 className="text-base font-semibold">About DWONLUOMOVIES</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              VJ EMMA.SITE streams movies, drama, animation, Nollywood titles and live channels in
+              DWONLUOMOVIES streams movies, drama, animation, Nollywood titles and live channels in
               HD. New titles land every week and VIP members get them first.
             </p>
           </section>
