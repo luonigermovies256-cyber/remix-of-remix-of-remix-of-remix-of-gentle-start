@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { data as db } from "@/lib/fdb";
+import { data as db } from "@/lib/cdb";
 import {
   BUILTIN_CATEGORIES,
   categoriesQuery,

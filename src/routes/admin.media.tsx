@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { UploadField } from "@/components/admin/UploadField";
 import { GenrePicker } from "@/components/admin/GenrePicker";
-import { data as db } from "@/lib/fdb";
+import { data as db } from "@/lib/cdb";
 import { fileUrl } from "@/lib/storage";
 import { BADGES, BADGE_POSITIONS } from "@/lib/sections";
 import {

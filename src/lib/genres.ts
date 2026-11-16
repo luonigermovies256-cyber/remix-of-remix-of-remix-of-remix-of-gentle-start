@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { data as db } from "@/lib/fdb";
+import { data as db } from "@/lib/cdb";
 import { allMediaQuery, type MediaItem } from "@/lib/media";
 
 
