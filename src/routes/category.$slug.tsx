@@ -7,6 +7,7 @@ import { Sidebar } from "@/components/youku/Sidebar";
 import { TopBar } from "@/components/youku/TopBar";
 import { MediaCard } from "@/components/youku/MediaCard";
 import { GenreRail } from "@/components/youku/GenreRail";
+import { HomeGrid } from "@/components/youku/HomeGrid";
 import { MobileNav } from "@/components/youku/MobileNav";
 import { GridSkeleton } from "@/components/youku/Skeletons";
 import { Icon3D } from "@/components/Icon3D";
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/category/$slug")({
   head: ({ loaderData }) => {
     const label = loaderData?.label ?? "Browse";
     const blurb = loaderData?.blurb ?? CONTENT_FALLBACK_BLURB;
-    const title = `${label} — VJ EMMA.SITE`;
+    const title = `${label} — DWONLUOMOVIES`;
     return {
       meta: [
         { title },
@@ -256,15 +257,5 @@ function CategoryPage() {
     );
   }
 
-  return (
-    <Shell slug={slug} activeGenre={genre ?? undefined} onGenre={setGenre}>
-      {items.isLoading ? (
-        <GridSkeleton />
-      ) : items.data?.length ? (
-        <Grid items={items.data} />
-      ) : (
-        <Empty label={genre ? `${label} · ${genre}` : label} />
-      )}
-    </Shell>
-  );
+  return <HomeGrid data={items.data} isLoading={items.isLoading} />;
 }
