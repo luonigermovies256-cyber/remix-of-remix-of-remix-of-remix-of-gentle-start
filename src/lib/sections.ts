@@ -16,6 +16,7 @@ import {
   CalendarDays,
   Info,
   type LucideIcon,
+  Music,
 } from "lucide-react";
 
 export type Category = {
