@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Play, ChevronLeft, ChevronRight, Search, Download, Star } from "lucide-react";
 import { Sidebar } from "@/components/youku/Sidebar";
 import { TopBar } from "@/components/youku/TopBar";
-import { MediaCard } from "@/components/youku/MediaCard";
 import { RowSkeleton } from "@/components/youku/Skeletons";
 import { DbRow } from "@/components/youku/DbRow";
 
@@ -76,13 +75,6 @@ function Index() {
   const hero = useQuery(heroQuery());
   const latest = useQuery(allMediaQuery(300));
   const homeSections = useHomeSections();
-  const rail = useRef<HTMLDivElement>(null);
-  const railScroll = (dir: 1 | -1) => {
-    const el = rail.current;
-    if (!el) return;
-    el.scrollBy({ left: dir * Math.max(el.clientWidth * 0.8, 240), behavior: "smooth" });
-  };
-
   const slides = hero.data ?? [];
   const [index, setIndex] = useState(0);
 
