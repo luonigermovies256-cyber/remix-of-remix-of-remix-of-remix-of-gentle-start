@@ -19,6 +19,9 @@
  */
 
 @theme inline {
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-orange-foreground: var(--accent-orange-foreground);
+  --color-active: var(--active);
   --breakpoint-xs: 26rem;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -73,9 +76,12 @@
 :root {
   --radius: 0.625rem;
   /* VJ EMMA — translucent purple & gold dark theme */
-  --background: oklch(0.16 0.045 300);
+  --background: oklch(0.17 0.035 265);
+  --accent-orange: oklch(0.74 0.17 55);
+  --accent-orange-foreground: oklch(0.99 0 0);
+  --active: oklch(0.68 0.17 285);
   --foreground: oklch(0.97 0 0);
-  --card: oklch(0.24 0.06 300 / 0.45);
+  --card: oklch(0.22 0.04 265);
   --card-foreground: oklch(0.97 0 0);
   --popover: oklch(0.2 0.06 300 / 0.85);
   --popover-foreground: oklch(0.97 0 0);
@@ -135,6 +141,9 @@
 }
 
 .dark {
+  --accent-orange: oklch(0.74 0.17 55);
+  --accent-orange-foreground: oklch(0.99 0 0);
+  --active: oklch(0.68 0.17 285);
   --background: oklch(0.129 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
   --card: oklch(0.208 0.042 265.755);
