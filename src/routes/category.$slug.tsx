@@ -161,6 +161,7 @@ function ForYou({ genre }: { genre: string | null }) {
 const KIND_FOR_SLUG: Record<string, string[]> = {
   movies: ["movie", "film"],
   drama: ["series", "drama", "tv", "show"],
+  music: ["music", "song", "concert"],
 };
 
 function CategoryPage() {
