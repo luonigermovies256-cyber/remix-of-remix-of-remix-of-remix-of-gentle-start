@@ -41,7 +41,7 @@ export function TopBar() {
       return;
     }
     if (await install()) {
-      toast.success("Installing VJ EMMA.SITE — check your home screen.");
+      toast.success("Installing DWONLUOMOVIES — check your home screen.");
       return;
     }
     if (canInstall) return; // user dismissed the native prompt
@@ -66,9 +66,9 @@ export function TopBar() {
   return (
     <header className="absolute inset-x-0 top-0 z-20 flex h-14 items-center gap-3 px-3 lg:gap-4 lg:pl-[calc(var(--sidebar-w)+20px)]">
       <Link to="/" className="flex min-w-0 items-center gap-2 lg:hidden">
-        <img src={logoAsset} alt="VJ EMMA.SITE logo" className="size-8 shrink-0 object-contain" />
+        <img src={logoAsset} alt="DWONLUOMOVIES logo" className="size-8 shrink-0 object-contain" />
         <span className="truncate text-[15px] font-black tracking-tight text-foreground">
-          VJ EMMA.SITE
+          DWONLUOMOVIES
         </span>
       </Link>
       <nav
@@ -151,7 +151,7 @@ export function TopBar() {
         >
           <Icon3D name="app" className="size-5" />
           <span className="hidden sm:inline">App</span>
-          <span className="sm:hidden">VJ EMMA</span>
+          <span className="sm:hidden">DWONLUOMOVIES</span>
         </button>
         {isAdmin && (
           <Link

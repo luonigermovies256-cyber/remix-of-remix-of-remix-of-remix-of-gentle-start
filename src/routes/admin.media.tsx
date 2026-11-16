@@ -299,6 +299,20 @@ function MediaAdmin() {
 
   const list = (media.data ?? []).filter((m) => m.kind === tab);
 
+  const removeAll = useMutation({
+    mutationFn: async () => {
+      for (const table of ["episodes", "hero_slides", "media"]) {
+        const { error } = await db.from(table as "media").delete();
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      toast.success("All movies deleted");
+      void qc.invalidateQueries();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   return (
     <div className="space-y-5">
       <header className="flex flex-wrap items-center justify-between gap-3">
@@ -308,6 +322,18 @@ function MediaAdmin() {
             Upload movies, series, episodes, live channels and hero slides.
           </p>
         </div>
+        <Button
+          size="sm"
+          variant="destructive"
+          disabled={removeAll.isPending}
+          onClick={() => {
+            const answer = window.prompt("This deletes every movie, episode and slide. Type DELETE to confirm.");
+            if (answer === "DELETE") removeAll.mutate();
+          }}
+        >
+          {removeAll.isPending ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+          Delete all movies
+        </Button>
         <Button
           size="sm"
           onClick={() => {
