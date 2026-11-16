@@ -11,7 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as EmbedRouteImport } from './routes/embed'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as WatchRouteImport } from './routes/watch'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
@@ -35,9 +38,24 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmbedRoute = EmbedRouteImport.update({
   id: '/embed',
   path: '/embed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WatchRoute = WatchRouteImport.update({
@@ -104,7 +122,10 @@ const ApiPublicUploadsSplatRoute = ApiPublicUploadsSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/embed': typeof EmbedRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/watch': typeof WatchRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -120,7 +141,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/embed': typeof EmbedRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/watch': typeof WatchRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -138,7 +162,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/embed': typeof EmbedRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/watch': typeof WatchRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -157,7 +184,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/dashboard'
     | '/embed'
+    | '/login'
+    | '/signup'
     | '/watch'
     | '/admin/media'
     | '/admin/settings'
@@ -173,7 +203,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dashboard'
     | '/embed'
+    | '/login'
+    | '/signup'
     | '/watch'
     | '/admin/media'
     | '/admin/settings'
@@ -190,7 +223,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/dashboard'
     | '/embed'
+    | '/login'
+    | '/signup'
     | '/watch'
     | '/admin/media'
     | '/admin/settings'
@@ -208,7 +244,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
+  DashboardRoute: typeof DashboardRoute
   EmbedRoute: typeof EmbedRoute
+  LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
   WatchRoute: typeof WatchRoute
   CategorySlugRoute: typeof CategorySlugRoute
   GenreSlugRoute: typeof GenreSlugRoute
@@ -233,11 +272,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/embed': {
       id: '/embed'
       path: '/embed'
       fullPath: '/embed'
       preLoaderRoute: typeof EmbedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/watch': {
@@ -350,7 +410,10 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
+  DashboardRoute: DashboardRoute,
   EmbedRoute: EmbedRoute,
+  LoginRoute: LoginRoute,
+  SignupRoute: SignupRoute,
   WatchRoute: WatchRoute,
   CategorySlugRoute: CategorySlugRoute,
   GenreSlugRoute: GenreSlugRoute,

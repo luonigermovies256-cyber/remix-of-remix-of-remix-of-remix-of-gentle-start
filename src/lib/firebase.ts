@@ -55,3 +55,11 @@ export async function initAnalytics() {
 export const getDb = (): Firestore => getFirestore(firebaseApp());
 export const getFbAuth = (): Auth => getAuth(firebaseApp());
 export const getFbStorage = (): FirebaseStorage => getStorage(firebaseApp());
+
+export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey);
+
+/** Client-only Auth instance for viewer accounts; null on the server. */
+export function getFirebaseAuth(): Auth | null {
+  if (typeof window === "undefined" || !isFirebaseConfigured) return null;
+  return getAuth(firebaseApp());
+}

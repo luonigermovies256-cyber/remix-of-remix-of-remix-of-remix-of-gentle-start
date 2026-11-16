@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider, useAuth } from "@/lib/auth";
+import { FirebaseAuthProvider } from "@/lib/firebase-auth";
 import { usePaymentResume } from "@/lib/payments";
 import { Toaster } from "@/components/ui/sonner";
 import { PhoneGate } from "@/components/auth/PhoneGate";
@@ -132,11 +133,13 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <FirebaseAuthProvider>
         <PaymentResume />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
         <PhoneGate />
         <Toaster />
+        </FirebaseAuthProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
