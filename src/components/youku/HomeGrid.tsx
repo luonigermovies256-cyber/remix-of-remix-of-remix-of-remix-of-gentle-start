@@ -23,20 +23,12 @@ export function HomeGrid({ data, isLoading }: { data: MediaItem[] | undefined; i
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background/95 px-3 backdrop-blur-md">
-        <Link to="/" className="flex shrink-0 items-center gap-2">
-          <span className="hidden text-base font-black tracking-tight text-foreground min-[480px]:inline sm:text-lg">DWONLUOMOVIES</span>
+      <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md">
+        <div className="flex h-14 items-center gap-2 px-3">
+        <Link to="/" className="mr-auto flex shrink-0 items-center gap-2">
+          <span className="text-base font-black tracking-tight text-foreground sm:text-lg">DWONLUOMOVIES</span>
         </Link>
-        <label className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-full border border-border bg-card px-3">
-          <Search className="size-4 shrink-0 text-muted-foreground" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            aria-label="Search movies"
-            placeholder="Search movies..."
-            className="min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
-          />
-        </label>
+        
         <button type="button" onClick={() => setSubOpen(true)} className="shrink-0 rounded-full bg-accent-orange px-3.5 py-2 text-sm font-bold text-accent-orange-foreground">
           Subscribe
         </button>
@@ -47,6 +39,19 @@ export function HomeGrid({ data, isLoading }: { data: MediaItem[] | undefined; i
             Log in
           </button>
         )}
+        </div>
+        <div className="px-3 pb-2">
+          <label className="flex h-10 w-full items-center gap-2 rounded-full border border-border bg-card px-3">
+          <Search className="size-4 shrink-0 text-muted-foreground" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            aria-label="Search movies"
+            placeholder="Search movies..."
+            className="min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          />
+        </label>
+        </div>
       </header>
 
       <main className="mx-auto max-w-7xl px-2 pb-28 pt-3 lg:pb-12">
