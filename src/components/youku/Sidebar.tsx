@@ -19,9 +19,9 @@ export function Sidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-[var(--sidebar-w)] flex-col bg-sidebar backdrop-blur-2xl lg:flex">
       <Link to="/" className="flex h-16 shrink-0 items-center gap-2 pl-0 pr-2">
-        <img src={logoAsset} alt="VJ EMMA.SITE logo" className="size-11 shrink-0" />
+        <img src={logoAsset} alt="DWONLUOMOVIES logo" className="size-11 shrink-0" />
         <span className="whitespace-nowrap text-[15px] font-black uppercase tracking-tight text-foreground">
-          VJ EMMA.SITE
+          DWONLUOMOVIES
         </span>
       </Link>
       <nav className="scrollbar-none flex-1 overflow-y-auto pb-4">
