@@ -1,4 +1,4 @@
-import { data as db } from "@/lib/fdb";
+import { data as db } from "@/lib/cdb";
 
 export type MediaItem = {
   id: string;

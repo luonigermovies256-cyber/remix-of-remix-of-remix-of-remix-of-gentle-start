@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { data as db } from "@/lib/fdb";
+import { data as db } from "@/lib/cdb";
 import { CATEGORIES, type Category } from "@/lib/sections";
 
 /** A category row managed from the admin dashboard. */

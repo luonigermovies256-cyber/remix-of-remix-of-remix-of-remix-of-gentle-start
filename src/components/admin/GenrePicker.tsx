@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { data as db } from "@/lib/fdb";
+import { data as db } from "@/lib/cdb";
 import { genresQuery, genreSlugify, mediaGenres } from "@/lib/genres";
 
 /**

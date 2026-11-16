@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { UploadField } from "@/components/admin/UploadField";
-import { data as db } from "@/lib/fdb";
+import { data as db } from "@/lib/cdb";
 import { genresQuery, genreSlugify, type Genre } from "@/lib/genres";
 
 /** Admin CRUD for content genres (Action, Comedy, ...). */
