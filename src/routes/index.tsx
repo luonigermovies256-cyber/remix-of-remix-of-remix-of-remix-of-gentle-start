@@ -102,7 +102,7 @@ function GridCard({ item }: { item: MediaItem }) {
   return (
     <Link to="/watch" search={{ id: item.id }} className="block min-w-0">
       <div className="aspect-[2/3] overflow-hidden rounded-md bg-card">
-        {poster && <img src={poster} alt={item.title} loading="lazy" className="size-full object-cover" />}
+        {poster && <img src={poster} alt={item.title} loading="lazy" className="size-full object-cover text-[0px]" />}
       </div>
       <p className="mt-1.5 truncate text-[13px] font-bold uppercase text-foreground">{item.title}</p>
       {item.year && <p className="text-[11px] text-muted-foreground">{item.year}</p>}
