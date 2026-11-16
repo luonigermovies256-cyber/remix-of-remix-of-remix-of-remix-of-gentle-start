@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Play, ChevronLeft, ChevronRight } from "lucide-react";
+import { Play, ChevronLeft, ChevronRight, Search, Download, Star } from "lucide-react";
 import { Sidebar } from "@/components/youku/Sidebar";
 import { TopBar } from "@/components/youku/TopBar";
-import { MediaCard } from "@/components/youku/MediaCard";
 import { RowSkeleton } from "@/components/youku/Skeletons";
 import { DbRow } from "@/components/youku/DbRow";
 
 import { MobileNav } from "@/components/youku/MobileNav";
-import { heroQuery, allMediaQuery, trendingQuery } from "@/lib/media";
+import { heroQuery, allMediaQuery } from "@/lib/media";
 import { fileUrl } from "@/lib/storage";
+import type { MediaItem } from "@/lib/media";
 import { CATEGORIES, type Category } from "@/lib/sections";
 import { useSiteCategories } from "@/lib/categories";
 import { Film } from "lucide-react";
@@ -73,16 +73,8 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const hero = useQuery(heroQuery());
-  const latest = useQuery(allMediaQuery(20));
-  const trending = useQuery(trendingQuery(20));
+  const latest = useQuery(allMediaQuery(300));
   const homeSections = useHomeSections();
-  const rail = useRef<HTMLDivElement>(null);
-  const railScroll = (dir: 1 | -1) => {
-    const el = rail.current;
-    if (!el) return;
-    el.scrollBy({ left: dir * Math.max(el.clientWidth * 0.8, 240), behavior: "smooth" });
-  };
-
   const slides = hero.data ?? [];
   const [index, setIndex] = useState(0);
 
@@ -132,7 +124,8 @@ function Index() {
                 className="absolute inset-0"
                 style={{ backgroundImage: "var(--gradient-hero-bottom)" }}
               />
-              <div className="absolute inset-y-0 left-0 flex max-w-xl flex-col justify-end gap-3 px-3 pb-20 pt-10 lg:justify-center lg:gap-4 lg:px-8 lg:pb-0">
+              <div className="absolute inset-y-0 left-0 flex max-w-xl flex-col justify-end gap-3 px-3 pb-12 pt-10 lg:justify-center lg:gap-4 lg:px-8 lg:pb-0">
+                <span className="w-fit rounded-md bg-background/60 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.25em] text-go backdrop-blur-md">Streaming</span>
                 <h1 className="text-3xl font-black tracking-widest text-foreground sm:text-4xl lg:text-5xl">
                   {heroTitle}
                 </h1>
@@ -159,7 +152,13 @@ function Index() {
               </div>
 
               {slides.length > 1 && (
-                <div className="absolute bottom-20 right-5 z-10 flex gap-2 lg:bottom-20 lg:right-8">
+                <>
+                  <button type="button" aria-label="Previous slide" onClick={() => setIndex((i) => (i - 1 + slides.length) % slides.length)} className="absolute left-3 top-[72%] z-10 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-background/70 text-foreground ring-1 ring-border backdrop-blur-md"><ChevronLeft className="size-5" /></button>
+                  <button type="button" aria-label="Next slide" onClick={() => setIndex((i) => (i + 1) % slides.length)} className="absolute right-3 top-[72%] z-10 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-background/70 text-foreground ring-1 ring-border backdrop-blur-md"><ChevronRight className="size-5" /></button>
+                </>
+              )}
+              {slides.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 lg:bottom-20 right-5 z-10 flex gap-2 lg:bottom-20 lg:right-8">
                   {slides.map((s, i) => (
                     <button
                       key={s.id}
@@ -167,7 +166,7 @@ function Index() {
                       aria-label={`Show slide ${i + 1}`}
                       onClick={() => setIndex(i)}
                       className={`h-1.5 rounded-full transition-all ${
-                        i === index ? "w-6 bg-brand" : "w-2 bg-foreground/40"
+                        i === index ? "w-8 bg-go" : "w-2 bg-foreground/40"
                       }`}
                     />
                   ))}
@@ -176,38 +175,8 @@ function Index() {
             </section>
           )}
 
-          {/* Trending rail (newest trending upload first) */}
-          {!!trending.data?.length && (
-            <div className={`relative z-10 pl-3 sm:pl-4 lg:pl-8 ${heroTitle ? "-mt-8 lg:-mt-14" : "mt-4"}`}>
-              <div className="group/rail relative">
-                <div
-                  ref={rail}
-                  className="scrollbar-none flex gap-3 overflow-x-auto scroll-smooth pb-1 pr-2 sm:pr-4"
-                >
-                  {trending.data.map((item) => (
-                    <MediaCard key={`trending-${item.id}`} item={item} />
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  aria-label="Scroll trending left"
-                  onClick={() => railScroll(-1)}
-                  className="absolute left-0 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-full bg-background/80 text-foreground shadow-lg ring-1 ring-border backdrop-blur-md sm:size-10"
-                >
-                  <ChevronLeft className="size-4 sm:size-5" />
-                </button>
-                <button
-                  type="button"
-                  aria-label="Scroll trending right"
-                  onClick={() => railScroll(1)}
-                  className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-full bg-background/80 text-foreground shadow-lg ring-1 ring-border backdrop-blur-md sm:right-4 sm:size-10"
-                >
-                  <ChevronRight className="size-4 sm:size-5" />
-                </button>
-              </div>
-            </div>
-          )}
         </div>
+        <HomeLatest items={latest.data ?? []} />
 
         <main className="pb-28 pl-3 sm:pl-4 lg:pb-16 lg:pl-8">
           {latest.isLoading ? (
@@ -227,6 +196,102 @@ function Index() {
         </main>
       </div>
       <MobileNav />
+    </div>
+  );
+}
+
+function isNew(item: MediaItem) {
+  const t = item.created_at ? Date.parse(item.created_at) : 0;
+  return Date.now() - t < 14 * 864e5;
+}
+
+function PosterCard({ item }: { item: MediaItem }) {
+  const poster = fileUrl(item.poster_url ?? item.backdrop_url);
+  return (
+    <div className="flex w-full flex-col gap-2">
+      <Link to="/watch" search={{ id: item.id }} className="relative block aspect-[2/3] overflow-hidden rounded-xl bg-card">
+        {poster && <img src={poster} alt={item.title} loading="lazy" className="size-full object-cover" />}
+        {isNew(item) && (
+          <span className="go-btn absolute left-2 top-2 rounded-md px-2 py-0.5 text-[11px] font-extrabold uppercase tracking-wider">New</span>
+        )}
+        {item.rating != null && (
+          <span className="absolute bottom-2 left-2 flex items-center gap-1 text-sm font-bold text-foreground drop-shadow">
+            <Star className="size-3.5 fill-vip text-vip" />
+            {Number(item.rating).toFixed(1)}
+          </span>
+        )}
+      </Link>
+      <p className="truncate text-sm font-semibold text-foreground">{item.title}</p>
+      <Link to="/watch" search={{ id: item.id }} className="go-btn flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-extrabold uppercase tracking-widest">
+        <Download className="size-4" /> Download
+      </Link>
+    </div>
+  );
+}
+
+function HomeLatest({ items }: { items: MediaItem[] }) {
+  const [q, setQ] = useState("");
+  const [term, setTerm] = useState("");
+  const rail = useRef<HTMLDivElement>(null);
+  const allRef = useRef<HTMLElement>(null);
+  if (!items.length) return null;
+  const fresh = items.filter(isNew);
+  const latestList = (fresh.length ? fresh : items).slice(0, 12);
+  const t = term.trim().toLowerCase();
+  const all = t
+    ? items.filter((i) => `${i.title} ${i.genre ?? ""} ${i.actors ?? ""}`.toLowerCase().includes(t))
+    : items;
+  const scroll = (d: number) => rail.current?.scrollBy({ left: d * rail.current.clientWidth * 0.9, behavior: "smooth" });
+  return (
+    <div className="space-y-6 px-3 pt-5 sm:px-4 lg:px-8">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setTerm(q);
+          allRef.current?.scrollIntoView({ behavior: "smooth" });
+        }}
+        className="flex items-center gap-2 rounded-full border border-border bg-card/70 py-1.5 pl-4 pr-1.5"
+      >
+        <Search className="size-5 text-muted-foreground" />
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search movies, series, anime..."
+          className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+        />
+        <button type="submit" className="go-btn rounded-full px-5 py-2 text-sm font-extrabold uppercase tracking-widest">Go</button>
+      </form>
+
+      <section>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-foreground">
+            <span className="size-3 rounded-full bg-go" /> Latest Movies
+          </h2>
+          <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{fresh.length || latestList.length} New</span>
+        </div>
+        <div className="relative">
+          <div ref={rail} className="scrollbar-none grid auto-cols-[calc((100%-1.5rem)/3)] grid-flow-col gap-3 overflow-x-auto scroll-smooth sm:auto-cols-[180px]">
+            {latestList.map((i) => <PosterCard key={i.id} item={i} />)}
+          </div>
+          <button type="button" aria-label="Scroll left" onClick={() => scroll(-1)} className="absolute left-1 top-[30%] grid size-9 place-items-center rounded-full bg-background/70 text-foreground ring-1 ring-border backdrop-blur-md"><ChevronLeft className="size-5" /></button>
+          <button type="button" aria-label="Scroll right" onClick={() => scroll(1)} className="absolute right-1 top-[30%] grid size-9 place-items-center rounded-full bg-background/70 text-foreground ring-1 ring-border backdrop-blur-md"><ChevronRight className="size-5" /></button>
+        </div>
+      </section>
+
+      <section ref={allRef} className="border-t border-border pt-5">
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-go">All Content</p>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-foreground">{t ? `Results for "${term}"` : "Movies, Series & Animation"}</h2>
+          <span className="text-sm font-semibold text-muted-foreground">{all.length}</span>
+        </div>
+        {all.length ? (
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+            {all.map((i) => <PosterCard key={`all-${i.id}`} item={i} />)}
+          </div>
+        ) : (
+          <p className="py-6 text-center text-sm text-muted-foreground">Nothing matches your search.</p>
+        )}
+      </section>
     </div>
   );
 }
