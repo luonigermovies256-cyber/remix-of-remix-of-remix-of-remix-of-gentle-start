@@ -33,6 +33,7 @@ export function MobileNav() {
   const home = pathname === "/";
   const movies = pathname === "/category/movies";
   const series = pathname === "/category/drama";
+  const anime = pathname === "/category/animation";
 
   return (
     <>
@@ -64,10 +65,15 @@ export function MobileNav() {
             <span className="relative">Series</span>
           </Link>
 
-          <button type="button" onClick={() => setSubOpen(true)} className={`${shell} ${tone(false)}`}>
-            <Icon3D name="vip" className={iconClass(false)} />
-            <span>VIP</span>
-          </button>
+          <Link
+            to="/category/$slug"
+            params={{ slug: "animation" }}
+            className={`${shell} ${tone(anime)}`}
+          >
+            <Glow active={anime} />
+            <Icon3D name="animation" className={`relative ${iconClass(anime)}`} />
+            <span className="relative">Anime</span>
+          </Link>
 
           <button
             type="button"
