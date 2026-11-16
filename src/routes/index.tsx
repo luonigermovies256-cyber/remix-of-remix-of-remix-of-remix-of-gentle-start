@@ -153,8 +153,8 @@ function Index() {
 
               {slides.length > 1 && (
                 <>
-                  <button type="button" aria-label="Previous slide" onClick={() => setIndex((i) => (i - 1 + slides.length) % slides.length)} className="absolute left-3 top-1/2 z-10 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-background/70 text-foreground ring-1 ring-border backdrop-blur-md"><ChevronLeft className="size-5" /></button>
-                  <button type="button" aria-label="Next slide" onClick={() => setIndex((i) => (i + 1) % slides.length)} className="absolute right-3 top-1/2 z-10 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-background/70 text-foreground ring-1 ring-border backdrop-blur-md"><ChevronRight className="size-5" /></button>
+                  <button type="button" aria-label="Previous slide" onClick={() => setIndex((i) => (i - 1 + slides.length) % slides.length)} className="absolute left-3 top-[72%] z-10 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-background/70 text-foreground ring-1 ring-border backdrop-blur-md"><ChevronLeft className="size-5" /></button>
+                  <button type="button" aria-label="Next slide" onClick={() => setIndex((i) => (i + 1) % slides.length)} className="absolute right-3 top-[72%] z-10 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-background/70 text-foreground ring-1 ring-border backdrop-blur-md"><ChevronRight className="size-5" /></button>
                 </>
               )}
               {slides.length > 1 && (
