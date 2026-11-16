@@ -81,7 +81,7 @@
   --accent-orange-foreground: oklch(0.99 0 0);
   --active: oklch(0.68 0.17 285);
   --foreground: oklch(0.97 0 0);
-  --card: oklch(0.24 0.06 300 / 0.45);
+  --card: oklch(0.22 0.04 265);
   --card-foreground: oklch(0.97 0 0);
   --popover: oklch(0.2 0.06 300 / 0.85);
   --popover-foreground: oklch(0.97 0 0);
