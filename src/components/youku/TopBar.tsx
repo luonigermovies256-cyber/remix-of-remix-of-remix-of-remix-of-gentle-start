@@ -9,6 +9,7 @@ import { useSiteCategories } from "@/lib/categories";
 import { getSetting, loadAppSettings, type MobileAppSettings } from "@/lib/app-settings";
 import { usePwaInstall } from "@/lib/pwa";
 import { toast } from "sonner";
+import { useFirebaseAuth } from "@/lib/firebase-auth";
 
 /** Tabs shown in the mobile top strip, in order. */
 const TOP_TABS = [
@@ -31,6 +32,7 @@ export function TopBar() {
   );
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { canInstall, installed, install } = usePwaInstall();
+  const viewer = useFirebaseAuth();
 
   /** Triggers the real browser install of our app — no manual steps shown. */
   const installApp = async () => {
@@ -159,6 +161,20 @@ export function TopBar() {
             <span className="flex items-center gap-1.5">
               <Icon3D name="admin" className="size-4" /> Admin
             </span>
+          </Link>
+        )}
+        {viewer.user ? (
+          <>
+            <Link to="/dashboard" className="max-w-[110px] truncate rounded-full px-3 py-1.5 text-[12px] text-foreground/85 hover:bg-foreground/12">
+              {viewer.user.displayName || viewer.user.email || "Dashboard"}
+            </Link>
+            <button onClick={() => void viewer.logout()} className="rounded-full bg-foreground/15 px-3 py-1.5 text-[12px] font-medium text-foreground hover:bg-foreground/25">
+              Logout
+            </button>
+          </>
+        ) : (
+          <Link to="/login" search={{ redirect: "/dashboard" }} className="rounded-full px-3 py-1.5 text-[12px] text-foreground/85 hover:bg-foreground/12">
+            Sign in
           </Link>
         )}
         {session ? (
