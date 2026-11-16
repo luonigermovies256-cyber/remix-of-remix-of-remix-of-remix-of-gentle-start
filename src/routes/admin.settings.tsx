@@ -30,10 +30,10 @@ import {
 
 export const Route = createFileRoute("/admin/settings")({
   head: () => ({ meta: [
-    { title: "Settings — VJ EMMA.SITE" },
-    { name: "description", content: "Manage VJ EMMA.SITE uploads, subscription plans and app settings." },
-    { property: "og:title", content: "Settings — VJ EMMA.SITE" },
-    { property: "og:description", content: "Manage VJ EMMA.SITE uploads, subscription plans and app settings." },
+    { title: "Settings — DWONLUOMOVIES" },
+    { name: "description", content: "Manage DWONLUOMOVIES uploads, subscription plans and app settings." },
+    { property: "og:title", content: "Settings — DWONLUOMOVIES" },
+    { property: "og:description", content: "Manage DWONLUOMOVIES uploads, subscription plans and app settings." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),

@@ -56,7 +56,7 @@ export const CATEGORIES: Category[] = [
     slug: "upcoming-selections", short: "Upcoming",
     label: "Upcoming Selections",
     icon: CalendarClock,
-    blurb: "Coming soon to VJ EMMA.SITE.",
+    blurb: "Coming soon to DWONLUOMOVIES.",
   },
   {
     slug: "for-the-week", short: "Weekly",
@@ -64,7 +64,7 @@ export const CATEGORIES: Category[] = [
     icon: CalendarDays,
     blurb: "This week's curated line-up.",
   },
-  { slug: "learn-more", short: "About", label: "Learn More", icon: Info, blurb: "About VJ EMMA.SITE, VIP and support." },
+  { slug: "learn-more", short: "About", label: "Learn More", icon: Info, blurb: "About DWONLUOMOVIES, VIP and support." },
 ];
 
 export const CONTENT_CATEGORIES = CATEGORIES.filter(

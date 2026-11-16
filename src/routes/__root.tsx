@@ -84,17 +84,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "VJ EMMA.SITE" },
+      { title: "DWONLUOMOVIES" },
       { name: "description", content: "Stream dramas, anime, movies and shows in HD." },
-      { property: "og:site_name", content: "VJ EMMA.SITE" },
-      { property: "og:title", content: "VJ EMMA.SITE" },
+      { property: "og:site_name", content: "DWONLUOMOVIES" },
+      { property: "og:title", content: "DWONLUOMOVIES" },
       { property: "og:description", content: "Stream dramas, anime, movies and shows in HD." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#140a24" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-title", content: "VJ EMMA" },
+      { name: "apple-mobile-web-app-title", content: "DWONLUOMOVIES" },
     ],
     links: [
       {

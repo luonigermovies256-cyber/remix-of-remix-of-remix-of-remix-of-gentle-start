@@ -32,7 +32,7 @@ export const BUILTIN_CATEGORIES: SiteCategory[] = CATEGORIES.map((c: Category) =
   builtin: true,
 }));
 
-export const CONTENT_FALLBACK_BLURB = "Browse titles on VJ EMMA.SITE.";
+export const CONTENT_FALLBACK_BLURB = "Browse titles on DWONLUOMOVIES.";
 
 export function slugify(value: string) {
   return value

@@ -7,10 +7,10 @@ export const Route = createFileRoute("/signup")({
   }),
   head: () => ({
     meta: [
-      { title: "Sign up — VJ EMMA.SITE" },
-      { name: "description", content: "Sign up to your VJ EMMA.SITE viewer account with email or Google." },
-      { property: "og:title", content: "Sign up — VJ EMMA.SITE" },
-      { property: "og:description", content: "Sign up to your VJ EMMA.SITE viewer account." },
+      { title: "Sign up — DWONLUOMOVIES" },
+      { name: "description", content: "Sign up to your DWONLUOMOVIES viewer account with email or Google." },
+      { property: "og:title", content: "Sign up — DWONLUOMOVIES" },
+      { property: "og:description", content: "Sign up to your DWONLUOMOVIES viewer account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

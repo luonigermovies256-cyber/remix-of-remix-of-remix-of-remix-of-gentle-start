@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Icon3D } from "@/components/Icon3D";
-import logoAsset from "@/assets/logo.png";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { SubscribeModal } from "@/components/auth/SubscribeModal";
 import { useAuth } from "@/lib/auth";
@@ -66,7 +65,6 @@ export function TopBar() {
   return (
     <header className="absolute inset-x-0 top-0 z-20 flex h-14 items-center gap-3 px-3 lg:gap-4 lg:pl-[calc(var(--sidebar-w)+20px)]">
       <Link to="/" className="flex min-w-0 items-center gap-2 lg:hidden">
-        <img src={logoAsset} alt="DWONLUOMOVIES logo" className="size-8 shrink-0 object-contain" />
         <span className="truncate text-[15px] font-black tracking-tight text-foreground">
           DWONLUOMOVIES
         </span>

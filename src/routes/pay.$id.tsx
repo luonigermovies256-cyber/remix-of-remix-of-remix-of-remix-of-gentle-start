@@ -7,10 +7,10 @@ import { getTx, startPesapal, syncTransaction, type PaymentTx } from "@/lib/paym
 export const Route = createFileRoute("/pay/$id")({
   head: () => ({
     meta: [
-      { title: "Complete your payment — VJ EMMA.SITE" },
-      { name: "description", content: "Pay for your VJ EMMA.SITE membership securely with Pesapal." },
-      { property: "og:title", content: "Complete your payment — VJ EMMA.SITE" },
-      { property: "og:description", content: "Pay for your VJ EMMA.SITE membership securely with Pesapal." },
+      { title: "Complete your payment — DWONLUOMOVIES" },
+      { name: "description", content: "Pay for your DWONLUOMOVIES membership securely with Pesapal." },
+      { property: "og:title", content: "Complete your payment — DWONLUOMOVIES" },
+      { property: "og:description", content: "Pay for your DWONLUOMOVIES membership securely with Pesapal." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -143,7 +143,7 @@ function PayPage() {
         )}
 
         <Link to="/" className="mt-5 block text-center text-xs text-muted-foreground underline">
-          Back to VJ EMMA.SITE
+          Back to DWONLUOMOVIES
         </Link>
       </div>
     </main>

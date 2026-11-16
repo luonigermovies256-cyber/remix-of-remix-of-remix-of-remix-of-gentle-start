@@ -1,5 +1,4 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import logoAsset from "@/assets/logo.png";
 import { Icon3D } from "@/components/Icon3D";
 import { useAuth } from "@/lib/auth";
 import { useSiteCategories } from "@/lib/categories";
@@ -19,7 +18,6 @@ export function Sidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-[var(--sidebar-w)] flex-col bg-sidebar backdrop-blur-2xl lg:flex">
       <Link to="/" className="flex h-16 shrink-0 items-center gap-2 pl-0 pr-2">
-        <img src={logoAsset} alt="DWONLUOMOVIES logo" className="size-11 shrink-0" />
         <span className="whitespace-nowrap text-[15px] font-black uppercase tracking-tight text-foreground">
           DWONLUOMOVIES
         </span>

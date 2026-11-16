@@ -4,7 +4,6 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import logoAsset from "@/assets/logo.png";
 import { registerAccount, signInWithGoogle, signInWithPhone } from "@/lib/auth";
 
 type Mode = "login" | "register";
@@ -78,8 +77,7 @@ export function AuthModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[340px] gap-0 rounded-2xl border-border bg-card p-5">
         <div className="mb-4 flex items-center gap-2">
-          <img src={logoAsset} alt="" className="size-6" />
-          <span className="text-[13px] font-bold tracking-tight">VJ EMMA.SITE</span>
+          <span className="text-[13px] font-bold tracking-tight">DWONLUOMOVIES</span>
         </div>
         <h2 className="text-base font-semibold">
           {mode === "login" ? "Sign in" : "Create account"}

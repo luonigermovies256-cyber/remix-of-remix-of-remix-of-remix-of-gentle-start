@@ -453,7 +453,7 @@ export function SubscribeModal({
       amount={current?.price ?? 0}
       planLabel={
         current
-          ? `VJ EMMA.SITE ${formatMoney(current.price)} ${current.duration_days} DAYS PASS`
+          ? `DWONLUOMOVIES ${formatMoney(current.price)} ${current.duration_days} DAYS PASS`
           : null
       }
       reference={tx?.reference ?? null}

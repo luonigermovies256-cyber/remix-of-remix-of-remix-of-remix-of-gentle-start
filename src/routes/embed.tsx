@@ -14,7 +14,7 @@ export const Route = createFileRoute("/embed")({
   }),
   head: () => ({
     meta: [
-      { title: "Nexus Embedded Player | VJ EMMA.SITE" },
+      { title: "Nexus Embedded Player | DWONLUOMOVIES" },
       {
         name: "description",
         content:
